@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, useEffect, useRef, useState } from 'react';
 import Core from './Core';
 import axios from 'axios';
 import sha256 from 'crypto-js/sha256';
@@ -11,8 +11,43 @@ import CryptoJS from 'crypto-js';
 
 import { serializedComponentsReplacer, serializedComponentsReviver } from './utils/serializedStateProcessing';
 
+export default function DoenetViewer(props){
+  console.log("===DoenetViewer");
+  let documentRenderer = null;
+  let core = useRef(null);
 
-class DoenetViewer extends Component {
+  const requestedVariant = props.requestedVariant || { index: 0 };
+  let contentId = useRef(null);
+
+  // useEffect(()=>{
+  //   //Constructor
+  //   console.log(">>>init!")
+  //   core.current = <p>core!</p>
+  // },[])
+
+  useEffect(()=>{
+    // console.log(">>>doenetML updated!")
+    // console.log(">>>doenetML",props.doenetML)
+
+    // calculate contentId from doenetML
+    contentId.current = sha256(JSON.stringify(props.doenetML)).toString(CryptoJS.enc.Hex);
+  console.log(">>>in useEffect: contentId.current",contentId.current)
+},[props.doenetML])
+
+  // if (!core.current){
+  //   return null;
+  // }
+
+  // console.log(">>>props",props)
+  // console.log(">>>requestedVariant",requestedVariant)
+  console.log(">>>contentId.current",contentId.current)
+
+  return <p>{props.doenetML}</p>
+  // return documentRenderer;
+
+};
+
+class DoenetViewer_old extends Component {
   constructor(props) {
     super(props);
     this.update = this.update.bind(this);
@@ -427,7 +462,7 @@ class DoenetViewer extends Component {
 
 }
 
-export default DoenetViewer;
+// export default DoenetViewer;
 
 
 

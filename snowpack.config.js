@@ -23,8 +23,8 @@ module.exports = {
     'src/Media/profile_pictures': '/profile_pictures',
     'src/API': '/api',
     'src/Home': '/',
-    'src/Viewer': '/viewer',
-    'src/Viewer/renderers': '/viewer/renderers',
+    'src/Viewer/renderers': '/renderers',
+    // 'src/Viewer': '/viewer',
 
   },
   plugins: [

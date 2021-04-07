@@ -3,36 +3,37 @@ import DoenetViewer from '../../Viewer/DoenetViewer.jsx';
 import doenetDefaultML from './defaultCode.doenet';
 
 export default function DoenetTest(){
+console.log("===DoenetTest")
 
-
-  //New DoenetViewer when code changes
+  const [doenetML,setDoenetML] = useState("");
+ 
+  //Update doenetML when file changes
   useEffect(()=>{
-    doenetML.current = doenetDefaultML;
-    setUpdateNumber((was)=>was+1)
-  },doenetDefaultML);
+    if (doenetDefaultML){
+      setDoenetML(doenetDefaultML);
+    }
+  },[doenetDefaultML]);
 
-  let doenetML = useRef("");
 
   const [attemptNumber,setAttemptNumber] = useState(1);
-  const [updateNumber,setUpdateNumber] = useState(1);
+  // const [updateNumber,setUpdateNumber] = useState(1);
   const showCorrectness = true;
   const readOnly = false;
   const solutionDisplayMode = "button";
   const showFeedback = true;
   const showHints = true;
   const ignoreDatabase = true;
-  const requestedVariant = '1'; //????
+  // const requestedVariant = { index: 0 };
 
   //For Cypress Test Use
   window.onmessage = (e)=>{
     if (e.data.doenetML !== undefined) {
-      doenetML.current = e.data.doenetML;
-      setUpdateNumber((was)=>was+1)
+      setDoenetML(e.data.doenetML)
     }
   };
 
 
-  if (doenetML.current === ""){
+  if (doenetML === ""){
     return null;
   }
 
@@ -42,13 +43,11 @@ export default function DoenetTest(){
         <label>Attempt Number: {attemptNumber} <button onClick={
           () => {
             setAttemptNumber((was)=>was+1)
-            setUpdateNumber((was)=>was+1)
           }
           }>New Attempt</button></label>
       </div>
       <DoenetViewer
-        key={"doenetviewer" + updateNumber}
-        doenetML={doenetML.current}
+        doenetML={doenetML}
         // contentId={"185fd09b6939d867d4faee82393d4a879a2051196b476acdca26140864bc967a"}
         flags={{
           showCorrectness,
@@ -59,7 +58,7 @@ export default function DoenetTest(){
         }}
         attemptNumber={attemptNumber}
         ignoreDatabase={ignoreDatabase}
-        requestedVariant={requestedVariant}
+        // requestedVariant={requestedVariant}
       // collaborate={true}
       // viewerExternalFunctions = {{ allAnswersSubmitted: this.setAnswersSubmittedTrueCallback}}
       // functionsSuppliedByChild = {this.functionsSuppliedByChild}
