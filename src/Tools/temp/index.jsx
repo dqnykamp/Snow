@@ -5,46 +5,52 @@ import axios from 'axios';
 
 function DynamicLoad(props) {
 console.log("===DynamicLoad")
-  let [components,setComponents] = useState([])
+  // let [components,setComponents] = useState([])
 
 
-  useEffect(()=>{
-      let propsArr = [{text:'im one'}, {text:'im two'}]
-      let promises = [];
-      for (let rendererName of props.renderers){
-        let loader = import(`/renderers/${rendererName}.js`).catch();
-        promises.push(loader);
-      }
+  // useEffect(()=>{
+  //     let propsArr = [{text:'im one'}, {text:'im two'}]
+  //     let promises = [];
+  //     for (let rendererName of props.renderers){
+  //       let loader = import(`/renderers/${rendererName}.js`).catch();
+  //       promises.push(loader);
+  //     }
 
-      // let components = [];
-      Promise.all(promises).then((resp)=>{
-        // resp.map((item)=>{
-        //   components.push(item.default({text:'this is from static path'}));
-        // })
-        // setComponents(components);
-        setComponents(resp.map((item,i)=>
-          item.default(propsArr[i])
-        ))
-      });
+  //     // let components = [];
+  //     Promise.all(promises).then((resp)=>{
+  //       // resp.map((item)=>{
+  //       //   components.push(item.default({text:'this is from static path'}));
+  //       // })
+  //       // setComponents(components);
+  //       setComponents(resp.map((item,i)=>
+  //         item.default(propsArr[i])
+  //       ))
+  //     });
 
-      // let loader = import(`/renderers/${props.renderers[0]}.js`).catch()
-      // loader.then((resp)=>{
-      //   // console.log(">>>resp",resp.default)
-        // const one = resp.default({text:'this is from static path'});
-      //   setComponents([<React.Fragment key='1'>{one}</React.Fragment>])
-      // })
+  //     // let loader = import(`/renderers/${props.renderers[0]}.js`).catch()
+  //     // loader.then((resp)=>{
+  //     //   // console.log(">>>resp",resp.default)
+  //       // const one = resp.default({text:'this is from static path'});
+  //     //   setComponents([<React.Fragment key='1'>{one}</React.Fragment>])
+  //     // })
 
-  },[])
+  // },[])
 
-  // for (let rendererName of props.renderers){
-  //    console.log(">>>renderName",rendererName)
-  //  }
+  let stuff = [];
 
+  for (let rendererName of props.renderers){
+     console.log(">>>renderName",rendererName)
+     const item = lazy(() => import(`/renderers/${rendererName}.js`));
+     stuff.push(item);
+   }
+
+   console.log(">>>stuff",stuff[0])
   // const One = lazy(() => import('/renderers/one.js'));
 
-  // const One = lazy(() => import('/renderers/one.js'));
-  // const Two = lazy(() => import('/renderers/two.js'));
+  const One = lazy(() => import('/renderers/one.js'));
+  const Two = lazy(() => import('/renderers/two.js'));
 
+  console.log(">>>one",One)
   // const many = lazy(()=>{
   //   import('/renderers/one.js')
   //   import('/renderers/two.js')
@@ -52,12 +58,16 @@ console.log("===DynamicLoad")
   // console.log(">>>many",many[0]);
   return (
     <>
-      {/* <Suspense fallback={<div>Components are Loading...</div>}>
-        <One />
-        <Two />
-      </Suspense> */}
+      <Suspense fallback={<div>Components are Loading...</div>}>
+        {stuff.map(item=>React.createElement(item))}
+        {React.createElement(stuff[0],{text:'new stuff'})}
+        {React.createElement(stuff[1])}
+        {/* {One} */}
+        {/* <One />
+        <Two /> */}
+      </Suspense>
 
-      {components}
+      {/* {components} */}
   
       {/* <p>This is a p tag</p> */}
     </>
