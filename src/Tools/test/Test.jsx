@@ -1,18 +1,18 @@
 import React, { useState, useEffect, useRef } from 'react';
-import DoenetViewer from '../../Viewer/DoenetViewer.jsx';
-import doenetDefaultML from './defaultCode.doenet';
+import Viewer from '../../Viewer/Viewer.jsx';
+import defaultDoenetML from './defaultCode.doenet';
 
-export default function DoenetTest(){
-console.log("===DoenetTest")
+export default function Test(){
+console.log("===Test")
 
   const [doenetML,setDoenetML] = useState("");
  
   //Update doenetML when file changes
   useEffect(()=>{
-    if (doenetDefaultML){
-      setDoenetML(doenetDefaultML);
+    if (defaultDoenetML){
+      setDoenetML(defaultDoenetML);
     }
-  },[doenetDefaultML]);
+  },[defaultDoenetML]);
 
 
   const [attemptNumber,setAttemptNumber] = useState(1);
@@ -23,7 +23,7 @@ console.log("===DoenetTest")
   const showFeedback = true;
   const showHints = true;
   const ignoreDatabase = true;
-  // const requestedVariant = { index: 0 };
+  const requestedVariant = { index: 0 };
 
   //For Cypress Test Use
   window.onmessage = (e)=>{
@@ -46,7 +46,7 @@ console.log("===DoenetTest")
           }
           }>New Attempt</button></label>
       </div>
-      <DoenetViewer
+      <Viewer
         doenetML={doenetML}
         // contentId={"185fd09b6939d867d4faee82393d4a879a2051196b476acdca26140864bc967a"}
         flags={{
@@ -58,7 +58,7 @@ console.log("===DoenetTest")
         }}
         attemptNumber={attemptNumber}
         ignoreDatabase={ignoreDatabase}
-        // requestedVariant={requestedVariant}
+        requestedVariant={requestedVariant}
       // collaborate={true}
       // viewerExternalFunctions = {{ allAnswersSubmitted: this.setAnswersSubmittedTrueCallback}}
       // functionsSuppliedByChild = {this.functionsSuppliedByChild}

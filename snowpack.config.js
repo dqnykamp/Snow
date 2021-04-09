@@ -24,7 +24,7 @@ module.exports = {
     'src/API': '/api',
     'src/Home': '/',
     'src/Viewer/renderers': '/renderers',
-    // 'src/Viewer': '/viewer',
+    'src/Viewer': '/viewer',
 
   },
   plugins: [
@@ -58,7 +58,7 @@ module.exports = {
     polyfillNode: true,
   },
   devOptions: {
-    openUrl: '/temp',
+    openUrl: '/test',
   },
   buildOptions: {
     watch: true,

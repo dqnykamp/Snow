@@ -22,7 +22,7 @@ import { ancestorsIncludingComposites } from './utils/descendants';
 
 export default class Core {
   constructor({ doenetML, doenetState, parameters, requestedVariant,
-    externalFunctions, flags = {}, coreReadyCallback, coreUpdatedCallback }) {
+    externalFunctions, flags = {}, coreJSONReadyCallback, coreReadyCallback, coreUpdatedCallback }) {
     // console.time('start up time');
 
     this.numerics = new Numerics();
@@ -136,31 +136,34 @@ export default class Core {
     this.setUpRng();
 
 
-    let serializedComponents;
+    // let serializedComponents;
 
-    if (doenetState) {
-      serializedComponents = doenetState;
-      let contentId;
-      if (serializedComponents[0].doenetAttributes) {
-        contentId = serializedComponents[0].doenetAttributes.contentId;
-      }
-      if (contentId === undefined) {
-        contentId = "";
-      }
-      console.log(`contentId from doenetState: ${contentId}`)
-      this.finishCoreConstruction({
-        contentIds: [contentId],
-        fullSerializedStates: [serializedComponents],
-        finishSerializedStateProcessing: false
-      });
-    } else {
+    // if (doenetState) {
+    //   serializedComponents = doenetState;
+    //   let contentId;
+    //   if (serializedComponents[0].doenetAttributes) {
+    //     contentId = serializedComponents[0].doenetAttributes.contentId;
+    //   }
+    //   if (contentId === undefined) {
+    //     contentId = "";
+    //   }
+    //   console.log(`contentId from doenetState: ${contentId}`)
+    //   this.finishCoreConstruction({
+    //     contentIds: [contentId],
+    //     fullSerializedStates: [serializedComponents],
+    //     finishSerializedStateProcessing: false
+    //   });
+    // } else {
+  
+
       let contentId = Hex.stringify(sha256(JSON.stringify(doenetML)));
       this.expandDoenetMLsToFullSerializedState({
         contentIds: [contentId],
         doenetMLs: [doenetML],
-        callBack: this.finishCoreConstruction
+        callBack: coreJSONReadyCallback
+        // callBack: this.finishCoreConstruction
       })
-    }
+    // }
   }
 
   finishCoreConstruction({

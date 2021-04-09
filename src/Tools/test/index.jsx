@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import DoenetTest from './DoenetTest.jsx';
-import axios from 'axios';
+import Test from './Test.jsx';
+// import axios from 'axios';
 
 
 // function DoenetTest(props){
@@ -12,7 +12,7 @@ import axios from 'axios';
 // }
 
 ReactDOM.render(
-  <DoenetTest />,
+  <Test />,
   document.getElementById('root'),
 );
 

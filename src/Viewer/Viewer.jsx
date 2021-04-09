@@ -11,43 +11,62 @@ import CryptoJS from 'crypto-js';
 
 import { serializedComponentsReplacer, serializedComponentsReviver } from './utils/serializedStateProcessing';
 
-export default function DoenetViewer(props){
-  console.log("===DoenetViewer");
-  let documentRenderer = null;
-  let core = useRef(null);
+export default function Viewer(props){
+  let [core,setCore] = useState(null);
+  let [documentJSX,setDocumentJSX] = useState(null);
 
   const requestedVariant = props.requestedVariant || { index: 0 };
   let contentId = useRef(null);
 
-  // useEffect(()=>{
-  //   //Constructor
-  //   console.log(">>>init!")
-  //   core.current = <p>core!</p>
-  // },[])
+  useEffect(()=>{
+    //Constructor
+    console.log(">>>init!")
+    setCore(new Core({
+      coreReadyCallback: (info)=>{console.log(">>>coreReadyCallback",info)},
+      coreJSONReadyCallback: displayGhosts,
+      coreUpdatedCallback: (info)=>{console.log(">>>coreUpdated",info)},
+      doenetML: props.doenetML,
+      externalFunctions: {
+        localStateChanged: ()=>{},
+        submitResponse: ()=>{},
+        recordSolutionView: ()=>{},
+        recordEvent: ()=>{},
+      },
+      flags: props.flags,
+      requestedVariant: props.requestedVariant,
+    }))
+    // core.current = 
+  },[])
 
   useEffect(()=>{
-    // console.log(">>>doenetML updated!")
-    // console.log(">>>doenetML",props.doenetML)
-
+    console.log(">>>doenetML updated!")
+    console.log(">>>doenetML",props.doenetML)
+    console.log(">>>core",core)
     // calculate contentId from doenetML
-    contentId.current = sha256(JSON.stringify(props.doenetML)).toString(CryptoJS.enc.Hex);
-  console.log(">>>in useEffect: contentId.current",contentId.current)
+    // contentId.current = sha256(JSON.stringify(props.doenetML)).toString(CryptoJS.enc.Hex);
+  // console.log(">>>in useEffect: contentId.current",contentId.current)
 },[props.doenetML])
 
-  // if (!core.current){
-  //   return null;
-  // }
+  function displayGhosts({calledAsynchronously,contentIds,fullSerializedStates}){
+    // console.log(">>>displayGhosts calledAsynchronously",calledAsynchronously)
+    // console.log(">>>displayGhosts contentIds",contentIds)
+    // console.log(">>>displayGhosts fullSerializedStates",fullSerializedStates)
+    setDocumentJSX(<p>ready!</p>)
+  }
+
+
+  console.log("===Display Viewer",documentJSX)
 
   // console.log(">>>props",props)
   // console.log(">>>requestedVariant",requestedVariant)
-  console.log(">>>contentId.current",contentId.current)
+  // console.log(">>>contentId.current",contentId.current)
 
-  return <p>{props.doenetML}</p>
+  return documentJSX;
   // return documentRenderer;
 
 };
 
-class DoenetViewer_old extends Component {
+class Viewer_old extends Component {
   constructor(props) {
     super(props);
     this.update = this.update.bind(this);
@@ -462,7 +481,7 @@ class DoenetViewer_old extends Component {
 
 }
 
-// export default DoenetViewer;
+// export default Viewer;
 
 
 
