@@ -3,6 +3,7 @@ import Core from './Core';
 import axios from 'axios';
 import sha256 from 'crypto-js/sha256';
 import CryptoJS from 'crypto-js';
+import VisibilitySensor from 'react-visibility-sensor';
 
 // TODO: dynamic loading of renderers fails if we don't load HotTable
 // even though we don't use HotTable anywhere
@@ -12,18 +13,17 @@ import CryptoJS from 'crypto-js';
 import { serializedComponentsReplacer, serializedComponentsReviver } from './utils/serializedStateProcessing';
 
 export default function Viewer(props){
-  let [core,setCore] = useState(null);
   let [documentJSX,setDocumentJSX] = useState(null);
+  let core = useRef(null)
+  let previousDoenetML = useRef("")
 
   const requestedVariant = props.requestedVariant || { index: 0 };
-  let contentId = useRef(null);
 
   useEffect(()=>{
     //Constructor
-    console.log(">>>init!")
-    setCore(new Core({
-      coreReadyCallback: (info)=>{console.log(">>>coreReadyCallback",info)},
-      coreJSONReadyCallback: displayGhosts,
+    // console.log(">>>init!")
+      core.current = new Core({
+      coreReadyCallback: buildGhosts,
       coreUpdatedCallback: (info)=>{console.log(">>>coreUpdated",info)},
       doenetML: props.doenetML,
       externalFunctions: {
@@ -33,25 +33,49 @@ export default function Viewer(props){
         recordEvent: ()=>{},
       },
       flags: props.flags,
-      requestedVariant: props.requestedVariant,
-    }))
-    // core.current = 
+      requestedVariant,
+    })
   },[])
 
   useEffect(()=>{
-    console.log(">>>doenetML updated!")
-    console.log(">>>doenetML",props.doenetML)
-    console.log(">>>core",core)
-    // calculate contentId from doenetML
-    // contentId.current = sha256(JSON.stringify(props.doenetML)).toString(CryptoJS.enc.Hex);
-  // console.log(">>>in useEffect: contentId.current",contentId.current)
+    //Only runs after doenetML was updated. Not first run.
+    if (previousDoenetML.current){
+      console.log(">>>doenetML updated!")
+      console.log(">>>previousDoenetML",previousDoenetML.current)
+      console.log(">>>doenetML",props.doenetML)
+      // calculate contentId from doenetML
+      // contentId.current = sha256(JSON.stringify(props.doenetML)).toString(CryptoJS.enc.Hex);
+    // console.log(">>>in useEffect: contentId.current",contentId.current)
+    }
+    previousDoenetML.current = props.doenetML;
 },[props.doenetML])
 
-  function displayGhosts({calledAsynchronously,contentIds,fullSerializedStates}){
-    // console.log(">>>displayGhosts calledAsynchronously",calledAsynchronously)
-    // console.log(">>>displayGhosts contentIds",contentIds)
-    // console.log(">>>displayGhosts fullSerializedStates",fullSerializedStates)
-    setDocumentJSX(<p>ready!</p>)
+ 
+
+  function buildGhosts({components}){
+    console.log("===buildGhosts")
+    console.log(">>>buildGhosts components",components)
+    //test which activeChildren of document are blocks
+    //Make GhostBlocks
+    //If visible and not processed then ask core for processing
+    setDocumentJSX(<>
+    <GhostBlock name='one' />
+    <GhostBlock name='two' />
+    <GhostBlock name='three' />
+    <GhostBlock name='four' />
+    </>)
+  }
+
+  function GhostBlock(props){
+    return <VisibilitySensor 
+    offset={{bottom:-100,top:-100}}
+    // intervalDelay={100}
+    partialVisibility={true}
+    onChange={(isVisible)=>{console.log(">>>is visible",isVisible,props.name)}}
+    >
+
+      <div style={{background:'blue',margin:'20px',height:'400px'}}>{props.name}</div>
+    </VisibilitySensor>
   }
 
 
@@ -65,6 +89,8 @@ export default function Viewer(props){
   // return documentRenderer;
 
 };
+
+
 
 class Viewer_old extends Component {
   constructor(props) {

@@ -22,7 +22,7 @@ import { ancestorsIncludingComposites } from './utils/descendants';
 
 export default class Core {
   constructor({ doenetML, doenetState, parameters, requestedVariant,
-    externalFunctions, flags = {}, coreJSONReadyCallback, coreReadyCallback, coreUpdatedCallback }) {
+    externalFunctions, flags = {}, coreReadyCallback, coreUpdatedCallback }) {
     // console.time('start up time');
 
     this.numerics = new Numerics();
@@ -52,8 +52,8 @@ export default class Core {
     this.submitResponseCallBack = this.submitResponseCallBack.bind(this);
 
     this.coreUpdatedCallback = coreUpdatedCallback;
-    this.coreReadyCallback = function () {
-      coreReadyCallback();
+    this.coreReadyCallback = function (info) {
+      coreReadyCallback(info);
 
       this.requestRecordEvent({
         verb: "experienced",
@@ -160,8 +160,7 @@ export default class Core {
       this.expandDoenetMLsToFullSerializedState({
         contentIds: [contentId],
         doenetMLs: [doenetML],
-        callBack: coreJSONReadyCallback
-        // callBack: this.finishCoreConstruction
+        callBack: this.finishCoreConstruction
       })
     // }
   }
@@ -249,13 +248,13 @@ export default class Core {
 
     // console.log(serializedComponents)
     // console.timeEnd('start up time');
-    console.log("** components at the end of the core constructor **");
-    console.log(this._components);
+    // console.log("** components at the end of the core constructor **");
+    // console.log(this._components);
 
     if (calledAsynchronously) {
-      this.coreReadyCallback()
+      this.coreReadyCallback({components: this._components})
     } else {
-      setTimeout(() => this.coreReadyCallback(), 0)
+      setTimeout(() => this.coreReadyCallback({components: this._components}), 0)
     }
 
   }
