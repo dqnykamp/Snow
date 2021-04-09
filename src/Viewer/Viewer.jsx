@@ -11,6 +11,7 @@ import VisibilitySensor from 'react-visibility-sensor';
 // import { HotTable } from '@handsontable/react';
 
 import { serializedComponentsReplacer, serializedComponentsReviver } from './utils/serializedStateProcessing';
+import { FLEX_EXPANDER } from '@blueprintjs/core/lib/esm/common/classes';
 
 export default function Viewer(props){
   let [documentJSX,setDocumentJSX] = useState(null);
@@ -58,12 +59,22 @@ export default function Viewer(props){
     //test which activeChildren of document are blocks
     //Make GhostBlocks
     //If visible and not processed then ask core for processing
-    setDocumentJSX(<>
+    setDocumentJSX(<BlockContainer>
     <GhostBlock name='one' />
     <GhostBlock name='two' />
     <GhostBlock name='three' />
     <GhostBlock name='four' />
-    </>)
+    </BlockContainer>)
+  }
+  function BlockContainer(props){
+    return <div 
+    style={{
+      display:'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      flexDirection: 'column',
+    }}
+    >{props.children}</div>
   }
 
   function GhostBlock(props){
@@ -74,7 +85,16 @@ export default function Viewer(props){
     onChange={(isVisible)=>{console.log(">>>is visible",isVisible,props.name)}}
     >
 
-      <div style={{background:'blue',margin:'20px',height:'400px'}}>{props.name}</div>
+      <div style={{
+        background:'white',
+        margin:'.5em 6em .5em 6em',
+        height:'400px',
+        border:'1px solid black',
+        maxWidth:'800px',
+        width:'100%',
+        flexGrow:'1',
+
+        }}>{props.name}</div>
     </VisibilitySensor>
   }
 
