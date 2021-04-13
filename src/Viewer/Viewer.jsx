@@ -10,6 +10,7 @@ import VisibilitySensor from 'react-visibility-sensor';
 // What is the cause of this dependency?
 // import { HotTable } from '@handsontable/react';
 
+
 import { serializedComponentsReplacer, serializedComponentsReviver } from './utils/serializedStateProcessing';
 import { FLEX_EXPANDER } from '@blueprintjs/core/lib/esm/common/classes';
 
@@ -36,6 +37,7 @@ export default function Viewer(props){
       flags: props.flags,
       requestedVariant,
     })
+    core.current.isVisible = [] //initialize isVisible
   },[])
 
   useEffect(()=>{
@@ -53,36 +55,54 @@ export default function Viewer(props){
 
  
 
-  function buildGhosts({components}){
+  function buildGhosts(){
     console.log("===buildGhosts")
-    console.log(">>>buildGhosts components",components)
+    let blocks = [];
+    for (let cObj of core.current.renderedComponentInstructions['/_document1'].children){
+      if (cObj.componentType === 'p'){
+        blocks.push(<Block key={`block${cObj.componentName}`} name={cObj.componentName} />)
+      }
+    }
+    // console.log(">>>buildGhosts components",components)
+    // console.log(">>>core.current.document",core.current.document) //Top of tree
     //test which activeChildren of document are blocks
-    //Make GhostBlocks
+    //Make Blocks
     //If visible and not processed then ask core for processing
     setDocumentJSX(<BlockContainer>
-    <GhostBlock name='one' />
-    <GhostBlock name='two' />
-    <GhostBlock name='three' />
-    <GhostBlock name='four' />
+      {blocks}
+    {/* <Block name='one' />
+    <Block name='two' />
+    <Block name='three' />
+    <Block name='four' /> */}
     </BlockContainer>)
   }
-  function BlockContainer(props){
-    return <div 
-    style={{
-      display:'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-      flexDirection: 'column',
-    }}
-    >{props.children}</div>
-  }
 
-  function GhostBlock(props){
+
+  function Block(props){
+    let isContructed = useRef(false);
+
     return <VisibilitySensor 
     offset={{bottom:-100,top:-100}}
     // intervalDelay={100}
     partialVisibility={true}
-    onChange={(isVisible)=>{console.log(">>>is visible",isVisible,props.name)}}
+    onChange={(isVisible)=>{
+      //track visible components
+      if (isVisible){
+        core.current.isVisible.push(props.name);
+      }else{
+        let index = core.current.isVisible.indexOf(props.name);
+        if (index > -1){
+          core.current.isVisible.splice(index,1)
+        }
+      }
+
+      // console.log(">>>is visible",isVisible,props.name)
+      if (!isContructed.current && isVisible){
+        //TODO: Construct block here using core
+        isContructed.current = true;
+        // console.log(">>>Constructed ", props.name)
+      }
+    }}
     >
 
       <div style={{
@@ -100,6 +120,8 @@ export default function Viewer(props){
 
 
   console.log("===Display Viewer",documentJSX)
+  console.log(">>>core.current",core.current) //Top of tree
+
 
   // console.log(">>>props",props)
   // console.log(">>>requestedVariant",requestedVariant)
@@ -110,6 +132,17 @@ export default function Viewer(props){
 
 };
 
+
+function BlockContainer(props){
+  return <div 
+  style={{
+    display:'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexDirection: 'column',
+  }}
+  >{props.children}</div>
+}
 
 
 class Viewer_old extends Component {
