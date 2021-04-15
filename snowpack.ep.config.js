@@ -50,7 +50,7 @@ module.exports = {
     },
   ],
   optimize: {
-    // bundle: true,
+    bundle: true,
     // minify: true,
     // target: 'es2020',
     // treeshake: true,
@@ -62,9 +62,9 @@ module.exports = {
     openUrl: '/temp',
   },
   buildOptions: {
-    watch: true,
-    out: 'dist_local',
-    clean: false,
+    // watch: true,
+    out: 'ep',
+    // clean: false,
     // minify: true
   },
 };
