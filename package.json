@@ -1,6 +1,7 @@
 {
   "scripts": {
-    "start": "cd doenet_docker && docker-compose up -d && cd ..  && snowpack build --config snowpack.config.js",
+    "start": "snowpack build --config snowpack.ep.config.js",
+    "start-old": "cd doenet_docker && docker-compose up -d && cd ..  && snowpack build --config snowpack.config.js",
     "docker:build": "cd doenet_docker && docker-compose build",
     "dev": "snowpack dev --config snowpack.config.js",
     "hot": "snowpack dev --config snowpack.config.js",
